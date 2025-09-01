@@ -2,7 +2,7 @@
 <idea-plugin>
     <id>com.thesoulless.secretspecplugin</id>
     <name>SecretSpec Integration</name>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <vendor email="winsome.phrase8c@icloud.com" url="https://github.com/thesoulless/secretspec-intellij-plugin">Hamed N.</vendor>
 
     <description><![CDATA[
@@ -19,7 +19,7 @@
     ]]></description>
 
     <change-notes><![CDATA[
-    1.2.1 - 🎯 Per-run-configuration settings! Each run configuration can now have its own SecretSpec profile and provider settings.
+    1.2.2 - 🎯 Per-run-configuration settings! Each run configuration can now have its own SecretSpec profile and provider settings.
     ]]></change-notes>
 
         <!-- Compatible with all IntelliJ IDEs -->

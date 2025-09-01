@@ -92,6 +92,26 @@ public abstract class SecretSpecRunConfigurationExtensionBase<T extends RunConfi
     }
     
     /**
+     * Always enabled for configurations where applicable
+     */
+    @Override
+    public boolean isEnabledFor(@NotNull T configuration, @Nullable RunnerSettings runnerSettings) {
+        return isApplicableFor(configuration);
+    }
+    
+    /**
+     * Base implementation - subclasses should implement their own command modification
+     */
+    @Override
+    protected void patchCommandLine(@NotNull T configuration,
+                                   @Nullable RunnerSettings runnerSettings,
+                                   @NotNull GeneralCommandLine cmdLine,
+                                   @NotNull String runnerId) throws ExecutionException {
+        // Default implementation does nothing
+        // Platform-specific extensions should override this method
+    }
+    
+    /**
      * Get SecretSpec settings for a run configuration
      */
     public static @Nullable SecretSpecRunSettings getSettings(@NotNull RunConfigurationBase<?> configuration) {

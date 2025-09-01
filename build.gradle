@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.thesoulless'
-version = '1.2.0'
+version = '1.2.1'
 
 repositories {
     mavenCentral()
@@ -50,7 +50,7 @@ patchPluginXml {
     
     // Plugin description from plugin.xml will be used
     changeNotes = """
-        <h3>1.2.0</h3>
+        <h3>1.2.1</h3>
         <ul>
             <li>🎯 <strong>Per-run-configuration settings!</strong> Each run configuration now has its own SecretSpec settings</li>
             <li>🔧 Configure different profiles and providers for different projects and configurations</li>

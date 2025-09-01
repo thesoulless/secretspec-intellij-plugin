@@ -33,7 +33,7 @@ A GoLand plugin that automatically integrates [SecretSpec](https://secretspec.de
 ### From Source
 1. Clone this repository:
    ```bash
-   git clone https://github.com/thesoulless/secretspecplugin.git
+   git clone https://github.com/thesoulless/secretspec-intellij-plugin.git
    cd secretspecplugin
    ```
 
@@ -65,19 +65,25 @@ secretspec run -- go run main.go
 
 ### Configuration
 
-Configure the plugin through GoLand settings:
+Configure SecretSpec settings per run configuration:
 
-1. Go to `File` → `Settings` → `Tools` → `SecretSpec Integration`
-2. Configure the following options:
-   - **Enable SecretSpec Integration**: Toggle the plugin on/off
-   - **Profile**: Optional. Specify which SecretSpec profile to use (e.g., `development`, `production`)
-   - **Provider**: Optional. Specify which provider backend to use (e.g., `keyring`, `dotenv`, `env`, `onepassword`, `lastpass`)
+1. **Create or Edit a Run Configuration**:
+   - Go to `Run` → `Edit Configurations...`
+   - Select an existing configuration or create a new one
+
+2. **Configure SecretSpec Settings**:
+   - Click on the **"SecretSpec"** tab in the run configuration dialog
+   - **Enable SecretSpec for this run configuration**: Toggle SecretSpec integration on/off
+   - **Profile**: Optional. Environment profile from secretspec.toml (e.g., `development`, `production`, `default`)
+   - **Provider**: Optional. Secret provider backend (e.g., `keyring`, `onepassword`, `dotenv`, `env`, `lastpass`)
+
+3. **Apply and Run**: Click Apply/OK and run your configuration as usual
 
 ### Example Configurations
 
 **With Profile and Provider:**
 ```bash
-secretspec run --profile production --provider dotenv -- go run main.go
+secretspec run --profile production --provider onepassword -- go run main.go
 ```
 
 **With Profile Only:**
@@ -92,26 +98,34 @@ secretspec run -- go run main.go
 
 ## How It Works
 
-The plugin integrates with GoLand's execution system by:
+The plugin integrates with JetBrains IDEs using a dual approach:
 
-1. **Intercepting Go Run Configurations**: Uses a custom `ProgramRunner` to detect Go run configurations
-2. **Command Modification**: Wraps the original Go command with the SecretSpec prefix
-3. **Settings Integration**: Applies user-configured profile and provider settings
-4. **Transparent Execution**: Maintains all original functionality while adding SecretSpec support
+1. **Settings UI**: Platform-specific run configuration extensions add a "SecretSpec" tab to run/debug configuration dialogs
+2. **Universal Command Modification**: A universal execution listener (`SecretSpecExecutionListener`) intercepts ALL run configurations and modifies commands when SecretSpec is enabled
+3. **Per-Configuration Storage**: Settings are stored individually with each run configuration, not globally
+4. **Transparent Execution**: Maintains all original IDE functionality while seamlessly injecting SecretSpec
 
 ## Project Structure
 
 ```
 src/main/java/com/thesoulless/secretspecplugin/
-├── settings/
-│   ├── SecretSpecSettings.java          # Settings storage and state management
-│   ├── SecretSpecSettingsConfigurable.java # Settings page configuration
-│   └── SecretSpecSettingsComponent.java     # Settings UI components
-├── runner/
-│   ├── SecretSpecGoRunner.java             # Main program runner
-│   └── SecretSpecGoRunProfileState.java   # Command line modification logic
 └── listener/
-    └── SecretSpecExecutionListener.java   # Execution event logging
+    └── SecretSpecExecutionListener.java   # Universal execution listener
+
+modules/
+├── core/src/main/java/com/thesoulless/secretspecplugin/
+│   ├── api/
+│   │   └── SecretSpecRunConfigurationExtensionBase.java  # Base extension class
+│   └── common/
+│       ├── SecretSpecRunSettings.java    # Settings data model
+│       └── SecretSpecSettingsPanel.java  # Shared UI components
+└── platform-go/src/main/java/com/thesoulless/secretspecplugin/go/
+    ├── SecretSpecGoRunConfigurationExtension.java  # Go-specific extension
+    └── SecretSpecGoSettingsEditor.java            # Go settings editor
+
+src/main/resources/META-INF/
+├── plugin.xml              # Main plugin descriptor
+└── goland-secretspec.xml   # Go-specific configurations
 ```
 
 ## Configuration Examples
@@ -128,7 +142,8 @@ DATABASE_URL = { default = "sqlite://./dev.db" }
 API_KEY = { description = "Development API key", required = true }
 ```
 
-**Plugin Settings:**
+**Run Configuration Settings:**
+- Enable SecretSpec: ✅ Checked
 - Profile: `development`
 - Provider: `keyring`
 
@@ -140,9 +155,10 @@ API_KEY = { description = "Production API key", required = true }
 REDIS_URL = { description = "Redis connection string", required = true }
 ```
 
-**Plugin Settings:**
+**Run Configuration Settings:**
+- Enable SecretSpec: ✅ Checked
 - Profile: `production` 
-- Provider: `dotenv`
+- Provider: `onepassword`
 
 ## Troubleshooting
 
@@ -161,7 +177,7 @@ secretspec --version
 
 ### Plugin Not Working
 1. **Check Plugin Status**: Go to `Settings` → `Plugins` and ensure "SecretSpec Integration" is enabled
-2. **Verify Settings**: Go to `Settings` → `Tools` → `SecretSpec Integration` and ensure the plugin is enabled
+2. **Verify Configuration**: Check your run configuration's "SecretSpec" tab and ensure it's enabled
 3. **Check Logs**: View `Help` → `Show Log in Finder/Explorer` for any error messages
 
 ### Invalid Profile/Provider
@@ -170,19 +186,19 @@ secretspec --version
 **Solution**: 
 1. Verify your `secretspec.toml` configuration
 2. Run `secretspec check` to validate your setup
-3. Ensure the profile/provider specified in plugin settings exists
+3. Ensure the profile/provider specified in your run configuration's SecretSpec tab exists
 
 ## Development
 
 ### Building from Source
 
 1. **Prerequisites:**
-   - JDK 11 or higher
-   - IntelliJ IDEA Ultimate or GoLand for development
+   - JDK 17 or higher
+   - IntelliJ IDEA or GoLand for development
 
 2. **Setup:**
    ```bash
-   git clone https://github.com/thesoulless/secretspecplugin.git
+   git clone https://github.com/thesoulless/secretspec-intellij-plugin.git
    cd secretspecplugin
    ./gradlew build
    ```
@@ -211,14 +227,5 @@ This project is released into the public domain under The Unlicense - see the [L
 
 ## Support
 
-- **Issues**: Report bugs and request features on [GitHub Issues](https://github.com/thesoulless/secretspecplugin/issues)
+- **Issues**: Report bugs and request features on [GitHub Issues](https://github.com/thesoulless/secretspec-intellij-plugin/issues)
 - **Documentation**: Visit [SecretSpec Documentation](https://secretspec.dev/)
-- **Community**: Join discussions on [Discord](https://discord.gg/secretspec)
-
-## Changelog
-
-### v1.0.0 (Initial Release)
-- ✅ Automatic Go command wrapping with SecretSpec
-- ✅ Configurable profile and provider settings
-- ✅ Settings UI integration
-- ✅ GoLand compatibility (2023.1+)

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idea-plugin>
+    <!-- Go-specific extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Go-specific run configuration extension that adds SecretSpec tab -->
+        <runConfigurationExtension implementation="com.thesoulless.secretspecplugin.go.SecretSpecGoRunConfigurationExtension"/>
+    </extensions>
+</idea-plugin>

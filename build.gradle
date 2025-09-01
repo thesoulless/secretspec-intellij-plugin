@@ -1,0 +1,112 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '1.17.2'
+}
+
+group = 'com.thesoulless'
+version = '1.2.0'
+
+repositories {
+    mavenCentral()
+}
+
+// Source sets to include module code
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'modules/core/src/main/java', 'modules/platform-go/src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources', 'modules/core/src/main/resources', 'modules/platform-go/src/main/resources']
+        }
+    }
+}
+
+
+
+// Configure Gradle IntelliJ Plugin
+// Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
+intellij {
+    version = '2023.1.1'
+    type = 'IC' // Target IntelliJ Community (works for all IntelliJ-based IDEs)
+    
+    // Plugin Dependencies. Go plugin is now optional dependency in plugin.xml
+    plugins = ['org.jetbrains.plugins.go:231.8109.175']
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+// Set the JVM compatibility versions
+tasks.withType(JavaCompile) {
+    options.release = 17
+}
+
+patchPluginXml {
+    sinceBuild = '231'
+    untilBuild = ''  // Explicitly remove the until-build constraint
+    
+    // Plugin description from plugin.xml will be used
+    changeNotes = """
+        <h3>1.2.0</h3>
+        <ul>
+            <li>🎯 <strong>Per-run-configuration settings!</strong> Each run configuration now has its own SecretSpec settings</li>
+            <li>🔧 Configure different profiles and providers for different projects and configurations</li>
+            <li>📋 Settings UI integrated directly into run configuration dialogs</li>
+            <li>🗑️ Removed global settings - everything is now per-configuration</li>
+            <li>⚡ More flexible and powerful workflow</li>
+        </ul>
+        <h3>1.1.0</h3>
+        <ul>
+            <li>🎉 Universal support for ALL run configurations and languages</li>
+            <li>✅ Works with Java, Go, Python, Node.js, and ANY application type</li>
+            <li>🔧 Removed language-specific dependencies - truly language-agnostic</li>
+            <li>📊 Enhanced execution logging for all configuration types</li>
+            <li>🏗️ Simplified architecture using execution listener for maximum compatibility</li>
+            <li>🚀 Compatible with IntelliJ IDEA, GoLand, WebStorm, PyCharm, and all JetBrains IDEs</li>
+        </ul>
+        <h3>1.0.2</h3>
+        <ul>
+            <li>Fixed module dependencies for proper GoLand compatibility</li>
+            <li>Added explicit platform module dependency</li>
+            <li>Resolved plugin loading warnings</li>
+        </ul>
+        <h3>1.0.1</h3>
+        <ul>
+            <li>Fixed version compatibility to support newer GoLand versions</li>
+            <li>Updated plugin group to com.thesoulless</li>
+            <li>Improved build compatibility</li>
+        </ul>
+        <h3>1.0.0</h3>
+        <ul>
+            <li>Initial release with SecretSpec integration for GoLand</li>
+            <li>Automatically wraps Go run/debug commands with SecretSpec</li>
+            <li>Configurable profile and provider settings</li>
+            <li>Settings UI in IDE preferences</li>
+        </ul>
+    """
+}
+
+signPlugin {
+    // Plugin signing configuration (optional)
+    // certificateChain = System.getenv("CERTIFICATE_CHAIN")
+    // privateKey = System.getenv("PRIVATE_KEY")
+    // password = System.getenv("PRIVATE_KEY_PASSWORD")
+}
+
+publishPlugin {
+    // Publishing configuration (optional)
+    // token = System.getenv("PUBLISH_TOKEN")
+}
+
+buildPlugin {
+    // Ensure the plugin jar includes all necessary files
+    archiveClassifier = ''
+}
+
+// Configure test dependencies if needed
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}

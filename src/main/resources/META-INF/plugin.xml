@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idea-plugin>
+    <id>com.thesoulless.secretspecplugin</id>
+    <name>SecretSpec Integration</name>
+    <version>1.2.0</version>
+    <vendor email="winsome.phrase8c@icloud.com" url="https://github.com/thesoulless/secretspec-intellij-plugin">Hamed N.</vendor>
+
+    <description><![CDATA[
+    Universal SecretSpec Integration plugin for all IntelliJ-based IDEs with per-configuration settings.
+    
+    Features:
+    - 🎯 Per-run-configuration SecretSpec settings (no more global settings!)
+    - 🔧 Configure different profiles and providers for different run configurations
+    - 🚀 Automatically prepends 'secretspec run --' to ANY run/debug command
+    - 📋 Settings UI integrated directly into run configuration dialogs
+    - 🌍 Works with Java, Go, Python, Node.js, and ANY application type
+    - ✨ Universal compatibility with IntelliJ IDEA, GoLand, WebStorm, PyCharm, and all JetBrains IDEs
+    - 🎨 Language-agnostic: works regardless of programming language or framework
+    ]]></description>
+
+    <change-notes><![CDATA[
+    1.2.0 - 🎯 Per-run-configuration settings! Each run configuration can now have its own SecretSpec profile and provider settings.
+    ]]></change-notes>
+
+        <!-- Compatible with all IntelliJ IDEs -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <!-- Required for GoLand-specific extensions -->
+    <depends optional="true" config-file="goland-secretspec.xml">org.jetbrains.plugins.go</depends>
+    
+    <!-- Version constraints managed by build.gradle -->
+    
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Execution listener to modify commands and log SecretSpec usage -->
+        <executor.executionListener implementation="com.thesoulless.secretspecplugin.listener.SecretSpecExecutionListener"/>
+    </extensions>
+
+    <actions>
+        <!-- Optional: Keep the Tools menu action for convenience -->
+    </actions>
+</idea-plugin>
